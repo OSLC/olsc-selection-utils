@@ -1,0 +1,32 @@
+# GitHub Pages configuration
+# This file enables GitHub Pages deployment for the OSLC Selection Utils demo
+
+# Use GitHub Actions for deployment
+source:
+  type: github-actions
+
+# Deployment configuration
+deployment:
+  # Use the demo folder as the root
+  source_folder: src/oslc-selection-demo
+  
+  # Custom domain (optional - uncomment and modify if you have one)
+  # custom_domain: your-domain.com
+
+# Build configuration
+build:
+  # Include vendor directory with built components
+  include:
+    - vendor/
+    - "*.html"
+    - "*.js"
+    - "*.css"
+    - "*.json"
+  
+  # Exclude development files
+  exclude:
+    - node_modules/
+    - "*.md"
+    - "*.log"
+    - ".DS_Store"
+    - "Thumbs.db"

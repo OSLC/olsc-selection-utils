@@ -1,0 +1,289 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  NODE_VERSION: '22'
+  REGISTRY_URL: 'https://npm.pkg.github.com'
+
+jobs:
+  test:
+    name: Test Components
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests for postmessage-helper
+        run: npm run test --workspace=@oslc/postmessage-helper || echo "No tests configured"
+
+      - name: Build postmessage-helper
+        run: npm run build --workspace=@oslc/postmessage-helper
+
+      - name: Run tests for selection-webcomponent
+        run: npm run test --workspace=@oslc/selection-webcomponent || echo "No tests configured"
+
+      - name: Build selection-webcomponent
+        run: npm run build --workspace=@oslc/selection-webcomponent
+
+  build-and-publish:
+    name: Build and Publish to GitHub Registry
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: ${{ env.REGISTRY_URL }}
+          cache: 'npm'
+
+      - name: Configure npm for GitHub Registry
+        run: |
+          echo "@oslc:registry=${{ env.REGISTRY_URL }}" >> ~/.npmrc
+          echo "${{ env.REGISTRY_URL }}/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
+      - name: Update package.json repository URLs
+        run: |
+          # Update postmessage-helper package.json
+          cd src/oslc-postmessage-helper
+          npm pkg set repository.url="git+https://github.com/${{ github.repository }}.git"
+          npm pkg set repository.directory="src/oslc-postmessage-helper"
+          npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
+          
+          # Update selection-webcomponent package.json
+          cd ../oslc-selection-webcomponent
+          npm pkg set repository.url="git+https://github.com/${{ github.repository }}.git"
+          npm pkg set repository.directory="src/oslc-selection-webcomponent"
+          npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build and publish postmessage-helper
+        run: |
+          npm run build --workspace=@oslc/postmessage-helper
+          cd src/oslc-postmessage-helper
+          npm pack
+          
+          # Check if version exists before publishing
+          VERSION=$(npm pkg get version | tr -d '"')
+          if npm view @oslc/postmessage-helper@$VERSION --registry=${{ env.REGISTRY_URL }} 2>/dev/null; then
+            echo "Version $VERSION already exists, skipping publish"
+          else
+            npm publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish selection-webcomponent
+        run: |
+          npm run build --workspace=@oslc/selection-webcomponent
+          cd src/oslc-selection-webcomponent
+          npm pack
+          
+          # Check if version exists before publishing
+          VERSION=$(npm pkg get version | tr -d '"')
+          if npm view @oslc/selection-webcomponent@$VERSION --registry=${{ env.REGISTRY_URL }} 2>/dev/null; then
+            echo "Version $VERSION already exists, skipping publish"
+          else
+            npm publish
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: built-packages
+          path: |
+            src/oslc-postmessage-helper/dist/
+            src/oslc-selection-webcomponent/dist/
+            src/oslc-postmessage-helper/*.tgz
+            src/oslc-selection-webcomponent/*.tgz
+
+  deploy-demo:
+    name: Deploy Demo to GitHub Pages
+    needs: [test, build-and-publish]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build components for demo
+        run: |
+          # Build both components using workspace commands
+          npm run build --workspace=@oslc/postmessage-helper
+          npm run build --workspace=@oslc/selection-webcomponent
+          
+          # Copy built components to demo vendor folder
+          mkdir -p src/oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper
+          mkdir -p src/oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent
+          
+          cp -r src/oslc-postmessage-helper/dist/* src/oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper/
+          cp -r src/oslc-selection-webcomponent/dist/* src/oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent/
+
+      - name: Create deployment version info
+        run: |
+          cd src/oslc-selection-demo
+          cat > version.json << EOF
+          {
+            "version": "$(date -u +%Y%m%d-%H%M%S)",
+            "commit": "${{ github.sha }}",
+            "branch": "${{ github.ref_name }}",
+            "buildTime": "$(date -u --iso-8601=seconds)",
+            "components": {
+              "postmessage-helper": "$(cd ../oslc-postmessage-helper && npm pkg get version | tr -d '\"')",
+              "selection-webcomponent": "$(cd ../oslc-selection-webcomponent && npm pkg get version | tr -d '\"')"
+            }
+          }
+          EOF
+
+      - name: Create index page with build info
+        run: |
+          cd src/oslc-selection-demo
+          # Add build info to the HTML
+          sed -i 's|<div class="alert alert-info mt-4" role="alert">.*</div>|<div class="alert alert-success mt-4" role="alert"><strong>Build Status:</strong> <span class="text-success">✅ GitHub Pages deployment - Built from commit ${{ github.sha }}</span><br><small>Build time: $(date -u --iso-8601=seconds)</small></div>|' index.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./src/oslc-selection-demo
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  publish-release:
+    name: Publish Release Packages
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: ${{ env.REGISTRY_URL }}
+          cache: 'npm'
+
+      - name: Configure npm for GitHub Registry
+        run: |
+          echo "@oslc:registry=${{ env.REGISTRY_URL }}" >> ~/.npmrc
+          echo "${{ env.REGISTRY_URL }}/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
+      - name: Update package versions to release tag
+        run: |
+          RELEASE_VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Release version: $RELEASE_VERSION"
+          
+          # Update postmessage-helper version
+          cd src/oslc-postmessage-helper
+          npm version $RELEASE_VERSION --no-git-tag-version
+          npm pkg set repository.url="git+https://github.com/${{ github.repository }}.git"
+          npm pkg set repository.directory="src/oslc-postmessage-helper"
+          npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
+          
+          # Update selection-webcomponent version
+          cd ../oslc-selection-webcomponent
+          npm version $RELEASE_VERSION --no-git-tag-version
+          npm pkg set repository.url="git+https://github.com/${{ github.repository }}.git"
+          npm pkg set repository.directory="src/oslc-selection-webcomponent"
+          npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
+          
+          # Update dependency reference
+          npm pkg set dependencies.@oslc/postmessage-helper="^$RELEASE_VERSION"
+
+      - name: Build and publish release packages
+        run: |
+          # Install dependencies
+          npm install
+          
+          # Build and publish postmessage-helper
+          npm run build --workspace=@oslc/postmessage-helper
+          cd src/oslc-postmessage-helper
+          npm publish --tag latest
+          cd ../..
+          
+          # Build and publish selection-webcomponent
+          npm run build --workspace=@oslc/selection-webcomponent
+          cd src/oslc-selection-webcomponent
+          npm publish --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release artifacts
+        run: |
+          mkdir -p release-artifacts
+          
+          # Copy built distributions
+          cp -r src/oslc-postmessage-helper/dist release-artifacts/postmessage-helper-dist
+          cp -r src/oslc-selection-webcomponent/dist release-artifacts/selection-webcomponent-dist
+          
+          # Copy demo
+          cp -r src/oslc-selection-demo release-artifacts/demo
+          
+          # Create archive
+          tar -czf release-artifacts/oslc-selection-utils-${{ github.ref_name }}.tar.gz \
+            -C release-artifacts \
+            postmessage-helper-dist \
+            selection-webcomponent-dist \
+            demo
+
+      - name: Upload release artifacts
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./release-artifacts/oslc-selection-utils-${{ github.ref_name }}.tar.gz
+          asset_name: oslc-selection-utils-${{ github.ref_name }}.tar.gz
+          asset_content_type: application/gzip

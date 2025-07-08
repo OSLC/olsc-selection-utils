@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSLC Selection WebComponent Demo</title>
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Bootstrap for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- OSLC Components - load from local build -->
+    <script type="module">
+        // Load OSLC components
+        async function loadOslcComponents() {
+            try {
+                console.log('🔄 Loading OSLC Selection WebComponent...');
+                
+                // Load the browser-optimized bundle
+                await import('./vendor/@oslc/oslc-selection-webcomponent/index.browser.js');
+                console.log('✅ OSLC Selection WebComponent loaded successfully');
+                
+                // Set flag for build status
+                window.oslcProductionLoaded = true;
+                
+                // Update build status immediately
+                updateBuildStatus();
+                
+            } catch (error) {
+                console.error('❌ Failed to load OSLC component:', error);
+                window.oslcLoadError = error.message;
+                updateBuildStatus();
+            }
+        }
+        
+        // Make updateBuildStatus available globally
+        window.updateBuildStatus = function() {
+            const statusElement = document.getElementById('build-status');
+            if (statusElement) {
+                if (window.oslcProductionLoaded) {
+                    statusElement.innerHTML = '<span class="text-success">✅ Production components loaded successfully</span>';
+                } else if (window.oslcLoadError) {
+                    statusElement.innerHTML = `<span class="text-danger">❌ Failed to load components: ${window.oslcLoadError}</span>`;
+                } else {
+                    statusElement.innerHTML = '<span class="text-warning">⚠️ Components not loaded yet</span>';
+                }
+            }
+        }
+        
+        // Load components immediately
+        loadOslcComponents();
+    </script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        
+        .demo-card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .demo-section {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .demo-item {
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+        
+        .demo-item h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .resource-item {
+            border-left: 4px solid #007bff;
+            background: #f8f9fa;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .resource-url {
+            font-family: monospace;
+            font-size: 0.85em;
+            color: #6c757d;
+            word-break: break-all;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+        
+        .code-snippet {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+
+        /* Theme Examples - CSS Custom Properties for Styling */
+        
+        /* Material Design Theme */
+        .material-theme {
+            --oslc-button-border-radius: 4px;
+            --oslc-button-background: #1976d2;
+            --oslc-button-color: white;
+            --oslc-button-padding: 8px 16px;
+            --oslc-button-font-weight: 500;
+            --oslc-button-hover-background: #1565c0;
+            --oslc-button-active-background: #0d47a1;
+            --oslc-button-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Bootstrap Theme */
+        .bootstrap-theme {
+            --oslc-button-border-radius: 0.375rem;
+            --oslc-button-padding: 0.375rem 0.75rem;
+            --oslc-button-font-size: 1rem;
+            --oslc-button-border: 1px solid #007bff;
+            --oslc-button-background: #007bff;
+            --oslc-button-color: #ffffff;
+            --oslc-button-hover-background: #0056b3;
+            --oslc-button-hover-border-color: #0056b3;
+            --oslc-button-active-background: #004085;
+        }
+        
+        /* Rounded Theme */
+        .rounded-theme {
+            --oslc-button-border-radius: 25px;
+            --oslc-button-padding: 12px 24px;
+            --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --oslc-button-color: white;
+            --oslc-button-border: none;
+            --oslc-button-font-weight: 600;
+            --oslc-button-hover-transform: translateY(-2px);
+            --oslc-button-transition: all 0.3s ease;
+        }
+        
+        /* Dark Theme */
+        .dark-theme {
+            --oslc-button-background: #495057;
+            --oslc-button-color: #ffffff;
+            --oslc-button-border: 1px solid #6c757d;
+            --oslc-button-hover-background: #5a6268;
+            --oslc-button-hover-border-color: #545b62;
+            --oslc-button-active-background: #343a40;
+        }
+        
+        /* Outline Theme */
+        .outline-theme {
+            --oslc-button-background: transparent;
+            --oslc-button-color: #007bff;
+            --oslc-button-border: 2px solid #007bff;
+            --oslc-button-hover-background: #007bff;
+            --oslc-button-hover-color: white;
+            --oslc-button-active-background: #0056b3;
+        }
+        
+        /* Success Theme */
+        .success-theme {
+            --oslc-button-background: #28a745;
+            --oslc-button-color: white;
+            --oslc-button-border: 1px solid #28a745;
+            --oslc-button-hover-background: #218838;
+            --oslc-button-hover-border-color: #1e7e34;
+            --oslc-button-active-background: #1e7e34;
+        }
+        
+        /* Large Button Theme */
+        .large-theme {
+            --oslc-button-padding: 16px 32px;
+            --oslc-button-font-size: 1.2rem;
+            --oslc-button-font-weight: 600;
+            --oslc-button-min-width: 200px;
+            --oslc-button-border-radius: 8px;
+        }
+        
+        /* Compact Theme */
+        .compact-theme {
+            --oslc-button-padding: 4px 8px;
+            --oslc-button-font-size: 0.875rem;
+            --oslc-button-border-radius: 2px;
+        }
+        
+        /* Custom Animation Theme */
+        .animated-theme {
+            --oslc-button-background: #ff6b6b;
+            --oslc-button-color: white;
+            --oslc-button-border: none;
+            --oslc-button-border-radius: 6px;
+            --oslc-button-transition: all 0.3s ease;
+            --oslc-button-hover-background: #ff5252;
+            --oslc-button-hover-transform: scale(1.05);
+            --oslc-button-active-transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4">OSLC Selection WebComponent Demo</h1>
+                    <p class="lead">
+                        Experience the OSLC Selection WebComponent with full styling capabilities. This demo showcases 
+                        both the functional OSLC integration and the comprehensive theming system using CSS custom properties.
+                    </p>
+                    <div class="alert alert-info mt-4" role="alert">
+                        <strong>Build Status:</strong> <span id="build-status">Loading components...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <!-- Live Demo Section -->
+        <div class="demo-section">
+            <div class="card demo-card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">
+                        <i class="bi bi-play-circle"></i> Live Functional Demo
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Try the Selection Component:</h5>
+                            <p class="text-muted">
+                                Click the button below to experience OSLC resource selection. This demo simulates 
+                                the selection process and displays the results.
+                            </p>
+                            
+                            <!-- OSLC Selection Button -->
+                            <oslc-selection-button 
+                                dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0"
+                                dialog-title="Select OSLC Resources"
+                                button-text="Select OSLC Resources"
+                                button-class="btn btn-success btn-lg">
+                            </oslc-selection-button>
+                            
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    Note: This demo connects to <a href="https://rm.refimpl.oslc.ldsw.eu/" target="_blank">https://rm.refimpl.oslc.ldsw.eu/</a>. Credentials are admin:admin.
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5>Usage in HTML:</h5>
+                            <div class="code-snippet">&lt;oslc-selection-button 
+    dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0"
+    dialog-title="Select Resources"
+    button-text="Browse Items"&gt;
+&lt;/oslc-selection-button&gt;
+
+&lt;script&gt;
+document.querySelector('oslc-selection-button')
+    .addEventListener('oslc-selection-made', (event) =&gt; {
+        console.log('Selected:', event.detail.resources);
+    });
+&lt;/script&gt;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="demo-section">
+            <div class="card demo-card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-check-circle"></i> Selected Resources
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="selected-resources-container">
+                        <div class="empty-state">
+                            <h4>No resources selected yet</h4>
+                            <p>Use the selection button above to choose OSLC resources. Selected items will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Styling Examples Section -->
+        <div class="demo-section">
+            <h2>Component Styling Examples</h2>
+            <p>The OSLC Selection WebComponent supports extensive styling through CSS custom properties. Here are various pre-built themes:</p>
+            
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <h4>Default Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" button-text="Default Button"></oslc-selection-button>
+                    <div class="code-block">/* No custom properties needed for default styling */</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Material Design</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="material-theme" button-text="Material Button"></oslc-selection-button>
+                    <div class="code-block">.material-theme {
+    --oslc-button-background: #1976d2;
+    --oslc-button-color: white;
+    --oslc-button-font-weight: 500;
+    --oslc-button-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Bootstrap Style</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="bootstrap-theme" button-text="Bootstrap Button"></oslc-selection-button>
+                    <div class="code-block">.bootstrap-theme {
+    --oslc-button-border: 1px solid #007bff;
+    --oslc-button-background: #007bff;
+    --oslc-button-color: #ffffff;
+    --oslc-button-border-radius: 0.375rem;
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Rounded Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="rounded-theme" button-text="Rounded Button"></oslc-selection-button>
+                    <div class="code-block">.rounded-theme {
+    --oslc-button-border-radius: 25px;
+    --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --oslc-button-hover-transform: translateY(-2px);
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Dark Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="dark-theme" button-text="Dark Button"></oslc-selection-button>
+                    <div class="code-block">.dark-theme {
+    --oslc-button-background: #495057;
+    --oslc-button-color: #ffffff;
+    --oslc-button-border: 1px solid #6c757d;
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Outline Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="outline-theme" button-text="Outline Button"></oslc-selection-button>
+                    <div class="code-block">.outline-theme {
+    --oslc-button-background: transparent;
+    --oslc-button-color: #007bff;
+    --oslc-button-border: 2px solid #007bff;
+    --oslc-button-hover-background: #007bff;
+    --oslc-button-hover-color: white;
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Success Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="success-theme" button-text="Success Button"></oslc-selection-button>
+                    <div class="code-block">.success-theme {
+    --oslc-button-background: #28a745;
+    --oslc-button-color: white;
+    --oslc-button-hover-background: #218838;
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Large Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="large-theme" button-text="Large Button"></oslc-selection-button>
+                    <div class="code-block">.large-theme {
+    --oslc-button-padding: 16px 32px;
+    --oslc-button-font-size: 1.2rem;
+    --oslc-button-font-weight: 600;
+    --oslc-button-min-width: 200px;
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Compact Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="compact-theme" button-text="Compact"></oslc-selection-button>
+                    <div class="code-block">.compact-theme {
+    --oslc-button-padding: 4px 8px;
+    --oslc-button-font-size: 0.875rem;
+    --oslc-button-border-radius: 2px;
+}</div>
+                </div>
+                
+                <div class="demo-item">
+                    <h4>Animated Theme</h4>
+                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="animated-theme" button-text="Animated Button"></oslc-selection-button>
+                    <div class="code-block">.animated-theme {
+    --oslc-button-background: #ff6b6b;
+    --oslc-button-hover-transform: scale(1.05);
+    --oslc-button-active-transform: scale(0.95);
+    --oslc-button-transition: all 0.3s ease;
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Examples -->
+        <div class="demo-section">
+            <div class="card demo-card">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-code-square"></i> Integration Examples
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>JSP Integration (No Build Required)</h5>
+                            <div class="code-snippet">
+&lt;%@ page contentType="text/html" %&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;script type="module" 
+      src="https://cdn.jsdelivr.net/npm/@oslc/selection-webcomponent/dist/index.esm.js"&gt;
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;oslc-selection-button 
+        dialog-url="${pageContext.request.contextPath}/services/selector"
+        dialog-title="Select Requirements"
+        button-text="Browse"&gt;
+    &lt;/oslc-selection-button&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5>JavaScript/TypeScript</h5>
+                            <div class="code-snippet">
+import { OslcSelectionButton } from '@oslc/selection-webcomponent';
+
+const button = new OslcSelectionButton();
+button.dialogUrl = 'https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0';
+button.dialogTitle = 'Select Items';
+
+button.addEventListener('oslc-selection-made', (event) =&gt; {
+    event.detail.resources.forEach(resource =&gt; {
+        console.log(`Selected: ${resource['oslc:label']}`);
+    });
+});
+
+document.body.appendChild(button);
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Build Instructions -->
+        <div class="demo-section">
+            <div class="card demo-card">
+                <div class="card-header bg-info text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-gear"></i> Build Instructions
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <h5>To build and run the production components locally:</h5>
+                    <div class="code-snippet">
+# Windows
+build-components.ps1
+
+# Linux/Mac
+chmod +x build-components.sh
+./build-components.sh
+
+# Then serve the demo
+cd src/oslc-selection-demo
+python -m http.server 8080
+# or
+npx serve .
+                    </div>
+                    <p class="mt-3">After building, refresh this page to see the production components in action with full OSLC integration.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>OSLC Selection WebComponent</h5>
+                    <p class="mb-0">A modern, standards-based approach to OSLC selection dialogs with comprehensive styling support.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        Built with Web Standards • OSLC Core 3.0 • TypeScript • CSS Custom Properties
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for demo functionality -->
+    <script>
+        // Handle OSLC selection events
+        document.addEventListener('oslc-selection-made', function(event) {
+            console.log('OSLC Selection Made:', event.detail.resources);
+            displaySelectedResources(event.detail.resources);
+        });
+
+        // Handle OSLC cancellation events
+        document.addEventListener('oslc-selection-cancelled', function(event) {
+            console.log('OSLC Selection Cancelled:', event.detail.reason);
+            showNotification('Selection cancelled', 'warning');
+        });
+
+        // Update build status on page load (backup check)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Give components time to load and register
+            setTimeout(updateBuildStatus, 1000);
+        });
+
+        function displaySelectedResources(resources) {
+            const container = document.getElementById('selected-resources-container');
+            
+            if (resources.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h4>No resources selected</h4>
+                        <p>The selection was cancelled or no resources were chosen.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Selected ${resources.length} resource${resources.length === 1 ? '' : 's'}:</h5>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="clearSelection()">Clear All</button>
+                </div>
+                <div class="resources-list">
+            `;
+            
+            resources.forEach((resource, index) => {
+                html += `
+                    <div class="resource-item" data-index="${index}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${escapeHtml(resource['oslc:label'])}</h6>
+                                <div class="resource-url">${escapeHtml(resource['rdf:resource'])}</div>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeResource(${index})">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            
+            // Show success notification
+            showNotification(`Selected ${resources.length} resource${resources.length === 1 ? '' : 's'}`, 'success');
+        }
+
+        function clearSelection() {
+            const container = document.getElementById('selected-resources-container');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h4>Selection cleared</h4>
+                    <p>All selected resources have been removed.</p>
+                </div>
+            `;
+            showNotification('Selection cleared', 'info');
+        }
+
+        function removeResource(index) {
+            const resourceElement = document.querySelector(`[data-index="${index}"]`);
+            if (resourceElement) {
+                resourceElement.remove();
+                
+                // Check if any resources remain
+                const remainingResources = document.querySelectorAll('.resource-item');
+                if (remainingResources.length === 0) {
+                    clearSelection();
+                } else {
+                    showNotification('Resource removed', 'info');
+                }
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create and show a Bootstrap toast notification
+            const toastContainer = document.getElementById('toast-container') || createToastContainer();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${escapeHtml(message)}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Initialize and show the toast
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove the toast element after it's hidden
+            toast.addEventListener('hidden.bs.toast', () => {
+                toast.remove();
+            });
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.style.zIndex = '1050';
+            document.body.appendChild(container);
+            return container;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    
+    <!-- Bootstrap JS for toasts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

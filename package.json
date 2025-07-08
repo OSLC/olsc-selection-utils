@@ -1,0 +1,51 @@
+{
+  "name": "oslc-selection-utils",
+  "version": "1.0.0",
+  "description": "OSLC Selection utilities including postMessage helper and web component",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pwsh ./scripts/build-components.ps1",
+    "build:linux": "./scripts/build-components.sh",
+    "test:ci": "pwsh ./scripts/test-ci-local.ps1",
+    "test:ci:verbose": "pwsh ./scripts/test-ci-local.ps1 -Verbose",
+    "clean": "npm run clean:postmessage && npm run clean:webcomponent",
+    "clean:postmessage": "cd src/oslc-postmessage-helper && npm run clean",
+    "clean:webcomponent": "cd src/oslc-selection-webcomponent && npm run clean",
+    "install:all": "npm run install:postmessage && npm run install:webcomponent",
+    "install:postmessage": "cd src/oslc-postmessage-helper && npm install",
+    "install:webcomponent": "cd src/oslc-selection-webcomponent && npm install",
+    "serve:demo": "cd src/oslc-selection-demo && python -m http.server 8080",
+    "serve:demo:npm": "cd src/oslc-selection-demo && npx serve .",
+    "lint": "echo 'Linting not configured'",
+    "test": "echo 'Root level tests not configured'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OSLC/olsc-selection-utils.git"
+  },
+  "keywords": [
+    "oslc",
+    "selection",
+    "webcomponent",
+    "postmessage",
+    "delegated-ui"
+  ],
+  "author": "OSLC Community",
+  "license": "EPL-1.0 OR EDL-1.0",
+  "bugs": {
+    "url": "https://github.com/OSLC/olsc-selection-utils/issues"
+  },
+  "homepage": "https://github.com/OSLC/olsc-selection-utils#readme",
+  "workspaces": [
+    "src/oslc-postmessage-helper",
+    "src/oslc-selection-webcomponent"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}

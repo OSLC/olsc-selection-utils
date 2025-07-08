@@ -1,0 +1,16 @@
+# .npmrc template for OSLC Selection Utils
+# Copy this to your home directory as .npmrc or to your project root
+
+# Configure GitHub NPM registry for @oslc packages
+@oslc:registry=https://npm.pkg.github.com
+
+# Authentication token (replace YOUR_GITHUB_TOKEN with actual token)
+# Create a token at: https://github.com/settings/tokens
+# Requires 'read:packages' permission
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+
+# Optional: Configure other registries
+# registry=https://registry.npmjs.org/
+
+# Optional: Set always-auth for private registries
+# always-auth=true
