@@ -42,13 +42,12 @@ jobs:
         run: npm run build --workspace=@oslc/selection-webcomponent
 
   build-and-publish:
-    name: Build and Publish to GitHub Registry
+    name: Build and Package
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
       contents: read
-      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -57,62 +56,46 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          registry-url: ${{ env.REGISTRY_URL }}
           cache: 'npm'
-
-      - name: Configure npm for GitHub Registry
-        run: |
-          echo "@oslc:registry=${{ env.REGISTRY_URL }}" >> ~/.npmrc
-          echo "${{ env.REGISTRY_URL }}/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
-
-      - name: Update package.json repository URLs
-        run: |
-          # Update postmessage-helper package.json
-          cd src/oslc-postmessage-helper
-          npm pkg set repository.url="git+https://github.com/${{ github.repository }}.git"
-          npm pkg set repository.directory="src/oslc-postmessage-helper"
-          npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
-          
-          # Update selection-webcomponent package.json
-          cd ../oslc-selection-webcomponent
-          npm pkg set repository.url="git+https://github.com/${{ github.repository }}.git"
-          npm pkg set repository.directory="src/oslc-selection-webcomponent"
-          npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build and publish postmessage-helper
+      - name: Build and package postmessage-helper
         run: |
           npm run build --workspace=@oslc/postmessage-helper
           cd src/oslc-postmessage-helper
+          
+          # Create a pre-release version for main branch builds
+          BASE_VERSION=$(npm pkg get version | tr -d '"')
+          COMMIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          DEV_VERSION="${BASE_VERSION}-dev.${COMMIT_SHA}"
+          echo "Creating development build: $DEV_VERSION"
+          
+          # Temporarily set the development version
+          npm pkg set version="$DEV_VERSION"
           npm pack
           
-          # Check if version exists before publishing
-          VERSION=$(npm pkg get version | tr -d '"')
-          if npm view @oslc/postmessage-helper@$VERSION --registry=${{ env.REGISTRY_URL }} 2>/dev/null; then
-            echo "Version $VERSION already exists, skipping publish"
-          else
-            npm publish
-          fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Reset to original version
+          npm pkg set version="$BASE_VERSION"
 
-      - name: Build and publish selection-webcomponent
+      - name: Build and package selection-webcomponent
         run: |
           npm run build --workspace=@oslc/selection-webcomponent
           cd src/oslc-selection-webcomponent
+          
+          # Create a pre-release version for main branch builds
+          BASE_VERSION=$(npm pkg get version | tr -d '"')
+          COMMIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          DEV_VERSION="${BASE_VERSION}-dev.${COMMIT_SHA}"
+          echo "Creating development build: $DEV_VERSION"
+          
+          # Temporarily set the development version
+          npm pkg set version="$DEV_VERSION"
           npm pack
           
-          # Check if version exists before publishing
-          VERSION=$(npm pkg get version | tr -d '"')
-          if npm view @oslc/selection-webcomponent@$VERSION --registry=${{ env.REGISTRY_URL }} 2>/dev/null; then
-            echo "Version $VERSION already exists, skipping publish"
-          else
-            npm publish
-          fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Reset to original version
+          npm pkg set version="$BASE_VERSION"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -220,11 +203,14 @@ jobs:
           echo "@oslc:registry=${{ env.REGISTRY_URL }}" >> ~/.npmrc
           echo "${{ env.REGISTRY_URL }}/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
 
-      - name: Update package versions to release tag
+      - name: Extract version from release tag
         run: |
           RELEASE_VERSION=${GITHUB_REF#refs/tags/v}
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
           echo "Release version: $RELEASE_VERSION"
-          
+
+      - name: Update package versions and repository URLs
+        run: |
           # Update postmessage-helper version
           cd src/oslc-postmessage-helper
           npm version $RELEASE_VERSION --no-git-tag-version
@@ -239,21 +225,22 @@ jobs:
           npm pkg set repository.directory="src/oslc-selection-webcomponent"
           npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
           
-          # Update dependency reference
+          # Update dependency reference to use the new version
           npm pkg set dependencies.@oslc/postmessage-helper="^$RELEASE_VERSION"
 
-      - name: Build and publish release packages
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build and publish postmessage-helper
         run: |
-          # Install dependencies
-          npm install
-          
-          # Build and publish postmessage-helper
           npm run build --workspace=@oslc/postmessage-helper
           cd src/oslc-postmessage-helper
           npm publish --tag latest
-          cd ../..
-          
-          # Build and publish selection-webcomponent
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish selection-webcomponent
+        run: |
           npm run build --workspace=@oslc/selection-webcomponent
           cd src/oslc-selection-webcomponent
           npm publish --tag latest
