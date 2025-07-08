@@ -31,7 +31,12 @@ jobs:
 
       - name: Install dependencies for postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Run tests for postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
@@ -50,7 +55,8 @@ jobs:
         run: |
           # Install local dependency
           npm install ../oslc-postmessage-helper/oslc-postmessage-helper-*.tgz
-          npm ci
+          # Use npm install instead of npm ci since we just modified package-lock.json
+          npm install
 
       - name: Run tests for selection-webcomponent
         working-directory: ./src/oslc-selection-webcomponent
@@ -104,7 +110,11 @@ jobs:
       - name: Build and publish postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
         run: |
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
           npm run build
           npm pack
           
@@ -123,7 +133,8 @@ jobs:
         run: |
           # Install local dependency
           npm install ../oslc-postmessage-helper/oslc-postmessage-helper-*.tgz
-          npm ci
+          # Use npm install instead of npm ci since we just modified package-lock.json
+          npm install
           npm run build
           npm pack
           
@@ -176,14 +187,19 @@ jobs:
         run: |
           # Build postmessage-helper
           cd src/oslc-postmessage-helper
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
           npm run build
           npm pack
           
           # Build selection-webcomponent with local dependency
           cd ../oslc-selection-webcomponent
           npm install ../oslc-postmessage-helper/oslc-postmessage-helper-*.tgz
-          npm ci
+          # Use npm install instead of npm ci since we just modified package-lock.json
+          npm install
           npm run build
           
           # Copy built components to demo vendor folder
@@ -280,13 +296,21 @@ jobs:
         run: |
           # Build and publish postmessage-helper
           cd src/oslc-postmessage-helper
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
           npm run build
           npm publish --tag latest
           
           # Build and publish selection-webcomponent
           cd ../oslc-selection-webcomponent
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
           npm run build
           npm publish --tag latest
         env:
