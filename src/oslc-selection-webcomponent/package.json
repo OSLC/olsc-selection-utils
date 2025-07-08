@@ -42,7 +42,7 @@
     "directory": "src/oslc-selection-webcomponent"
   },
   "dependencies": {
-    "@oslc/postmessage-helper": "file:../oslc-postmessage-helper/oslc-postmessage-helper-1.0.0.tgz"
+    "@oslc/postmessage-helper": "*"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",

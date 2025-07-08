@@ -25,49 +25,20 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install dependencies for postmessage-helper
-        run: |
-          cd src/oslc-postmessage-helper
-          echo "Current working directory: $(pwd)"
-          echo "Checking npm and node versions:"
-          npm --version
-          node --version
-          echo "Checking package-lock.json content:"
-          head -10 package-lock.json
-          echo "Trying npm ci first..."
-          if ! npm ci; then
-            echo "npm ci failed, falling back to npm install..."
-            rm -f package-lock.json
-            npm install
-          fi
+      - name: Install dependencies
+        run: npm install
 
       - name: Run tests for postmessage-helper
-        working-directory: ./src/oslc-postmessage-helper
-        run: npm run test || echo "No tests configured"
+        run: npm run test --workspace=@oslc/postmessage-helper || echo "No tests configured"
 
       - name: Build postmessage-helper
-        working-directory: ./src/oslc-postmessage-helper
-        run: npm run build
-
-      - name: Pack postmessage-helper
-        working-directory: ./src/oslc-postmessage-helper
-        run: npm pack
-
-      - name: Install dependencies for selection-webcomponent
-        working-directory: ./src/oslc-selection-webcomponent
-        run: |
-          # Install local dependency
-          npm install ../oslc-postmessage-helper/oslc-postmessage-helper-*.tgz
-          # Use npm install instead of npm ci since we just modified package-lock.json
-          npm install
+        run: npm run build --workspace=@oslc/postmessage-helper
 
       - name: Run tests for selection-webcomponent
-        working-directory: ./src/oslc-selection-webcomponent
-        run: npm run test || echo "No tests configured"
+        run: npm run test --workspace=@oslc/selection-webcomponent || echo "No tests configured"
 
       - name: Build selection-webcomponent
-        working-directory: ./src/oslc-selection-webcomponent
-        run: npm run build
+        run: npm run build --workspace=@oslc/selection-webcomponent
 
   build-and-publish:
     name: Build and Publish to GitHub Registry
@@ -86,10 +57,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: ${{ env.REGISTRY_URL }}
-          cache: 'npm'
-          cache-dependency-path: |
-            src/oslc-postmessage-helper/package-lock.json
-            src/oslc-selection-webcomponent/package-lock.json
 
       - name: Configure npm for GitHub Registry
         run: |
@@ -110,11 +77,13 @@ jobs:
           npm pkg set repository.directory="src/oslc-selection-webcomponent"
           npm pkg set publishConfig.registry="${{ env.REGISTRY_URL }}"
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Build and publish postmessage-helper
-        working-directory: ./src/oslc-postmessage-helper
         run: |
-          npm ci
-          npm run build
+          npm run build --workspace=@oslc/postmessage-helper
+          cd src/oslc-postmessage-helper
           npm pack
           
           # Check if version exists before publishing
@@ -128,13 +97,9 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish selection-webcomponent
-        working-directory: ./src/oslc-selection-webcomponent
         run: |
-          # Install local dependency
-          npm install ../oslc-postmessage-helper/oslc-postmessage-helper-*.tgz
-          # Use npm install instead of npm ci since we just modified package-lock.json
-          npm install
-          npm run build
+          npm run build --workspace=@oslc/selection-webcomponent
+          cd src/oslc-selection-webcomponent
           npm pack
           
           # Check if version exists before publishing
@@ -173,40 +138,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: |
-            src/oslc-postmessage-helper/package-lock.json
-            src/oslc-selection-webcomponent/package-lock.json
+      - name: Install dependencies
+        run: npm install
 
       - name: Build components for demo
         run: |
-          # Build postmessage-helper
-          cd src/oslc-postmessage-helper
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-          npm run build
-          npm pack
-          
-          # Build selection-webcomponent with local dependency
-          cd ../oslc-selection-webcomponent
-          npm install ../oslc-postmessage-helper/oslc-postmessage-helper-*.tgz
-          # Use npm install instead of npm ci since we just modified package-lock.json
-          npm install
-          npm run build
+          # Build both components using workspace commands
+          npm run build --workspace=@oslc/postmessage-helper
+          npm run build --workspace=@oslc/selection-webcomponent
           
           # Copy built components to demo vendor folder
-          mkdir -p ../oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper
-          mkdir -p ../oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent
+          mkdir -p src/oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper
+          mkdir -p src/oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent
           
-          cp -r ../oslc-postmessage-helper/dist/* ../oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper/
-          cp -r dist/* ../oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent/
+          cp -r src/oslc-postmessage-helper/dist/* src/oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper/
+          cp -r src/oslc-selection-webcomponent/dist/* src/oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent/
 
       - name: Create deployment version info
         run: |
@@ -259,10 +205,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: ${{ env.REGISTRY_URL }}
-          cache: 'npm'
-          cache-dependency-path: |
-            src/oslc-postmessage-helper/package-lock.json
-            src/oslc-selection-webcomponent/package-lock.json
 
       - name: Configure npm for GitHub Registry
         run: |
@@ -293,24 +235,18 @@ jobs:
 
       - name: Build and publish release packages
         run: |
+          # Install dependencies
+          npm install
+          
           # Build and publish postmessage-helper
+          npm run build --workspace=@oslc/postmessage-helper
           cd src/oslc-postmessage-helper
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-          npm run build
           npm publish --tag latest
+          cd ../..
           
           # Build and publish selection-webcomponent
-          cd ../oslc-selection-webcomponent
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-          npm run build
+          npm run build --workspace=@oslc/selection-webcomponent
+          cd src/oslc-selection-webcomponent
           npm publish --tag latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
