@@ -24,19 +24,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: |
-            src/oslc-postmessage-helper/package-lock.json
-            src/oslc-selection-webcomponent/package-lock.json
 
       - name: Install dependencies for postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm ci
 
       - name: Run tests for postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
@@ -110,11 +101,7 @@ jobs:
       - name: Build and publish postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+          npm ci
           npm run build
           npm pack
           
