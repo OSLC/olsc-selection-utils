@@ -87,46 +87,8 @@ See the [live demo](https://OSLC.github.io/olsc-selection-utils/) for comprehens
 
 ### Prerequisites
 
-- Node.js 16+ and npm 7+
+- Node.js 22+
 - PowerShell 7+ (for Windows scripts)
-
-### Build Process
-
-```bash
-# Clone the repository
-git clone https://github.com/OSLC/olsc-selection-utils.git
-cd olsc-selection-utils
-
-# Install dependencies
-npm run install:all
-
-# Build all components
-npm run build
-
-# Run local demo
-npm run serve:demo
-```
-
-### Testing
-
-```bash
-# Run local CI simulation
-npm run test:ci
-
-# Run with verbose output
-npm run test:ci:verbose
-```
-
-## 🚀 CI/CD Pipeline
-
-This project uses GitHub Actions for automated building, testing, and deployment:
-
-### Automatic Processes
-
-- **On every push/PR**: Run tests and build validation
-- **On push to main**: Publish packages to GitHub NPM registry
-- **On push to main**: Deploy demo to GitHub Pages
-- **On release**: Publish versioned packages with release artifacts
 
 ### GitHub Registry
 
@@ -141,7 +103,6 @@ Live demo automatically deployed to: https://OSLC.github.io/olsc-selection-utils
 ## 📖 Documentation
 
 - **[Live Demo](https://OSLC.github.io/olsc-selection-utils/)** - Interactive examples and styling showcase
-- **[CI/CD Documentation](.github/README.md)** - Detailed GitHub Actions setup
 - **[Component Documentation](src/oslc-postmessage-helper/README.md)** - PostMessage Helper API
 - **[WebComponent Documentation](src/oslc-selection-webcomponent/README.md)** - Selection WebComponent API
 
@@ -172,22 +133,6 @@ button.addEventListener('oslc-selection-made', (event) => {
     // Handle selection
 });
 ```
-
-## 🎯 Use Cases
-
-### Enterprise Applications
-
-- **Requirements Management**: Select linked requirements
-- **Test Management**: Choose test cases and test plans
-- **Project Management**: Link work items and deliverables
-- **Asset Management**: Select related assets and resources
-
-### Integration Scenarios
-
-- **JSP/Servlet Applications**: Drop-in component for legacy systems
-- **Modern SPAs**: Framework-agnostic web component
-- **Microservices**: Standardized selection interface
-- **API Integration**: Consistent OSLC-compliant selection
 
 ## 🔍 Examples
 
@@ -233,22 +178,6 @@ document.addEventListener('oslc-selection-made', (event) => {
 });
 ```
 
-## 🤝 Contributing
+## License
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `npm run test:ci`
-5. Submit a pull request
-
-## 📝 License
-
-This project is licensed under the Eclipse Public License 1.0 OR Eclipse Distribution License 1.0.
-
-## 🔗 Links
-
-- **Demo**: https://OSLC.github.io/olsc-selection-utils/
-- **GitHub**: https://github.com/OSLC/olsc-selection-utils
-- **Issues**: https://github.com/OSLC/olsc-selection-utils/issues
-- **OSLC Community**: https://oslc.org
-- **Registry**: https://github.com/OSLC/olsc-selection-utils/packages
+This project is licensed under the Eclipse Public License 2.0.
