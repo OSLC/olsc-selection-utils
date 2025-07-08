@@ -282,15 +282,28 @@
                             
                             <!-- OSLC Selection Button -->
                             <oslc-selection-button 
-                                dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0"
                                 dialog-title="Select OSLC Resources"
                                 button-text="Select OSLC Resources"
                                 button-class="btn btn-success btn-lg">
                             </oslc-selection-button>
                             
                             <div class="mt-3">
-                                <small class="text-muted">
-                                    Note: This demo connects to <a href="https://rm.refimpl.oslc.ldsw.eu/" target="_blank">https://rm.refimpl.oslc.ldsw.eu/</a>. Credentials are admin:admin.
+                                <label for="dialog-url-input" class="form-label">
+                                    <strong>OSLC Selector URL:</strong>
+                                </label>
+                                <div class="input-group">
+                                    <input type="url" 
+                                           id="dialog-url-input" 
+                                           class="form-control" 
+                                           value="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector"
+                                           placeholder="Enter OSLC selector base URL">
+                                    <select id="protocol-selector" class="form-select" style="max-width: 250px;">
+                                        <option value="#oslc-core-postMessage-1.0">#oslc-core-postMessage-1.0</option>
+                                        <option value="#oslc-core-windowName-1.0" disabled>#oslc-core-windowName-1.0</option>
+                                    </select>
+                                </div>
+                                <small class="text-muted form-text">
+                                    Change this URL to test with different OSLC providers. The protocol dropdown will be automatically selected based on the URL hash. Default connects to <a href="https://rm.refimpl.oslc.ldsw.eu/" target="_blank">https://rm.refimpl.oslc.ldsw.eu/</a> (credentials: admin/admin).
                                 </small>
                             </div>
                         </div>
@@ -298,7 +311,7 @@
                         <div class="col-md-6">
                             <h5>Usage in HTML:</h5>
                             <div class="code-snippet">&lt;oslc-selection-button 
-    dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0"
+    dialog-url="[Base URL from input field] + [Protocol from dropdown]"
     dialog-title="Select Resources"
     button-text="Browse Items"&gt;
 &lt;/oslc-selection-button&gt;
@@ -343,13 +356,13 @@ document.querySelector('oslc-selection-button')
             <div class="demo-grid">
                 <div class="demo-item">
                     <h4>Default Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" button-text="Default Button"></oslc-selection-button>
+                    <oslc-selection-button button-text="Default Button"></oslc-selection-button>
                     <div class="code-block">/* No custom properties needed for default styling */</div>
                 </div>
                 
                 <div class="demo-item">
                     <h4>Material Design</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="material-theme" button-text="Material Button"></oslc-selection-button>
+                    <oslc-selection-button class="material-theme" button-text="Material Button"></oslc-selection-button>
                     <div class="code-block">.material-theme {
     --oslc-button-background: #1976d2;
     --oslc-button-color: white;
@@ -360,7 +373,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Bootstrap Style</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="bootstrap-theme" button-text="Bootstrap Button"></oslc-selection-button>
+                    <oslc-selection-button class="bootstrap-theme" button-text="Bootstrap Button"></oslc-selection-button>
                     <div class="code-block">.bootstrap-theme {
     --oslc-button-border: 1px solid #007bff;
     --oslc-button-background: #007bff;
@@ -371,7 +384,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Rounded Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="rounded-theme" button-text="Rounded Button"></oslc-selection-button>
+                    <oslc-selection-button class="rounded-theme" button-text="Rounded Button"></oslc-selection-button>
                     <div class="code-block">.rounded-theme {
     --oslc-button-border-radius: 25px;
     --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -381,7 +394,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Dark Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="dark-theme" button-text="Dark Button"></oslc-selection-button>
+                    <oslc-selection-button class="dark-theme" button-text="Dark Button"></oslc-selection-button>
                     <div class="code-block">.dark-theme {
     --oslc-button-background: #495057;
     --oslc-button-color: #ffffff;
@@ -391,7 +404,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Outline Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="outline-theme" button-text="Outline Button"></oslc-selection-button>
+                    <oslc-selection-button class="outline-theme" button-text="Outline Button"></oslc-selection-button>
                     <div class="code-block">.outline-theme {
     --oslc-button-background: transparent;
     --oslc-button-color: #007bff;
@@ -403,7 +416,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Success Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="success-theme" button-text="Success Button"></oslc-selection-button>
+                    <oslc-selection-button class="success-theme" button-text="Success Button"></oslc-selection-button>
                     <div class="code-block">.success-theme {
     --oslc-button-background: #28a745;
     --oslc-button-color: white;
@@ -413,7 +426,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Large Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="large-theme" button-text="Large Button"></oslc-selection-button>
+                    <oslc-selection-button class="large-theme" button-text="Large Button"></oslc-selection-button>
                     <div class="code-block">.large-theme {
     --oslc-button-padding: 16px 32px;
     --oslc-button-font-size: 1.2rem;
@@ -424,7 +437,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Compact Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="compact-theme" button-text="Compact"></oslc-selection-button>
+                    <oslc-selection-button class="compact-theme" button-text="Compact"></oslc-selection-button>
                     <div class="code-block">.compact-theme {
     --oslc-button-padding: 4px 8px;
     --oslc-button-font-size: 0.875rem;
@@ -434,7 +447,7 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Animated Theme</h4>
-                    <oslc-selection-button dialog-url="https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector#oslc-core-postMessage-1.0" class="animated-theme" button-text="Animated Button"></oslc-selection-button>
+                    <oslc-selection-button class="animated-theme" button-text="Animated Button"></oslc-selection-button>
                     <div class="code-block">.animated-theme {
     --oslc-button-background: #ff6b6b;
     --oslc-button-hover-transform: scale(1.05);
@@ -565,7 +578,89 @@ npx serve .
         document.addEventListener('DOMContentLoaded', function() {
             // Give components time to load and register
             setTimeout(updateBuildStatus, 1000);
+            
+            // Set up dialog URL input handler
+            setupDialogUrlHandler();
         });
+
+        function setupDialogUrlHandler() {
+            const urlInput = document.getElementById('dialog-url-input');
+            const protocolSelector = document.getElementById('protocol-selector');
+            if (!urlInput || !protocolSelector) return;
+            
+            // Parse URL and set initial protocol
+            function parseUrlAndSetProtocol(url) {
+                if (url.includes('#oslc-core-windowName-1.0')) {
+                    protocolSelector.value = '#oslc-core-windowName-1.0';
+                    return url.replace('#oslc-core-windowName-1.0', '');
+                } else if (url.includes('#oslc-core-postMessage-1.0')) {
+                    protocolSelector.value = '#oslc-core-postMessage-1.0';
+                    return url.replace('#oslc-core-postMessage-1.0', '');
+                } else {
+                    // Default to PostMessage if no protocol found
+                    protocolSelector.value = '#oslc-core-postMessage-1.0';
+                    return url;
+                }
+            }
+            
+            // Initialize with current URL value
+            const initialUrl = urlInput.value;
+            const baseUrl = parseUrlAndSetProtocol(initialUrl);
+            urlInput.value = baseUrl;
+            
+            // Update all buttons when URL or protocol changes
+            function updateAllButtonUrls() {
+                const baseUrl = urlInput.value.trim();
+                const protocol = protocolSelector.value;
+                
+                if (!baseUrl) return;
+                
+                // Construct full URL with protocol
+                const fullUrl = baseUrl + protocol;
+                
+                const buttons = document.querySelectorAll('oslc-selection-button');
+                buttons.forEach(button => {
+                    button.setAttribute('dialog-url', fullUrl);
+                });
+                
+                console.log(`Updated ${buttons.length} button(s) with URL: ${fullUrl}`);
+            }
+            
+            // Handle URL input changes with protocol detection
+            function handleUrlInput() {
+                const inputValue = urlInput.value.trim();
+                const baseUrl = parseUrlAndSetProtocol(inputValue);
+                
+                // Update input to show base URL without protocol
+                if (urlInput.value !== baseUrl) {
+                    urlInput.value = baseUrl;
+                }
+                
+                updateAllButtonUrls();
+            }
+            
+            // Update on input change (with debouncing)
+            let timeoutId;
+            urlInput.addEventListener('input', function() {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(handleUrlInput, 500); // 500ms debounce
+            });
+            
+            // Update immediately on blur
+            urlInput.addEventListener('blur', handleUrlInput);
+            
+            // Update when protocol selector changes
+            protocolSelector.addEventListener('change', updateAllButtonUrls);
+            
+            // Handle paste events to detect protocol in pasted URLs
+            urlInput.addEventListener('paste', function(e) {
+                // Use setTimeout to handle paste after the value is updated
+                setTimeout(handleUrlInput, 10);
+            });
+            
+            // Set initial URLs for all buttons
+            updateAllButtonUrls();
+        }
 
         function displaySelectedResources(resources) {
             const container = document.getElementById('selected-resources-container');
