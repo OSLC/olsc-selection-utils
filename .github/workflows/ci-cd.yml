@@ -26,8 +26,16 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies for postmessage-helper
-        working-directory: ./src/oslc-postmessage-helper
-        run: npm ci
+        run: |
+          echo "Repository root: $(pwd)"
+          echo "Files in repository root:"
+          ls -la
+          echo "Changing to postmessage-helper directory..."
+          cd src/oslc-postmessage-helper
+          echo "Current working directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          npm ci
 
       - name: Run tests for postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
