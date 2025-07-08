@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSLC Selection WebComponent - Styling Examples</title>
+    
+    <!-- Include the component -->
+    <script type="module">
+        // In production: import '@oslc/selection-webcomponent';
+        // For demo, we'll simulate it
+        class DemoOslcSelectionButton extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.render();
+            }
+            
+            render() {
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        :host {
+                          display: var(--oslc-button-display, inline-block);
+                          margin: var(--oslc-button-margin, 0);
+                        }
+                        
+                        button {
+                          padding: var(--oslc-button-padding, 8px 16px);
+                          border: var(--oslc-button-border, 1px solid #ccc);
+                          border-radius: var(--oslc-button-border-radius, 4px);
+                          background: var(--oslc-button-background, #f8f9fa);
+                          color: var(--oslc-button-color, #333);
+                          cursor: pointer;
+                          font-family: var(--oslc-button-font-family, inherit);
+                          font-size: var(--oslc-button-font-size, inherit);
+                          font-weight: var(--oslc-button-font-weight, normal);
+                          transition: var(--oslc-button-transition, all 0.2s ease);
+                          min-width: var(--oslc-button-min-width, auto);
+                          min-height: var(--oslc-button-min-height, auto);
+                        }
+                        
+                        button:hover {
+                          background: var(--oslc-button-hover-background, #e9ecef);
+                          border-color: var(--oslc-button-hover-border-color, #adb5bd);
+                          color: var(--oslc-button-hover-color, var(--oslc-button-color, #333));
+                          transform: var(--oslc-button-hover-transform, none);
+                        }
+                        
+                        button:active {
+                          background: var(--oslc-button-active-background, #dee2e6);
+                          transform: var(--oslc-button-active-transform, none);
+                        }
+                        
+                        button:focus {
+                          outline: var(--oslc-button-focus-outline, 2px solid #007bff);
+                          outline-offset: var(--oslc-button-focus-outline-offset, 2px);
+                        }
+                    </style>
+                    <button onclick="alert('Dialog would open here')">${this.getAttribute('button-text') || 'Select Resources'}</button>
+                `;
+            }
+            
+            static get observedAttributes() {
+                return ['button-text'];
+            }
+            
+            attributeChangedCallback() {
+                this.render();
+            }
+        }
+        
+        customElements.define('oslc-selection-button', DemoOslcSelectionButton);
+    </script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .demo-section {
+            background: white;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 20px 0;
+        }
+        
+        .demo-item {
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+        
+        .demo-item h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        /* Default Theme - uses component defaults, no overrides needed */
+        
+        /* Material Design Theme */
+        .material-theme {
+            --oslc-button-border-radius: 4px;
+            --oslc-button-background: #1976d2;
+            --oslc-button-color: white;
+            --oslc-button-padding: 8px 16px;
+            --oslc-button-font-weight: 500;
+            --oslc-button-hover-background: #1565c0;
+            --oslc-button-active-background: #0d47a1;
+            --oslc-button-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Bootstrap Theme */
+        .bootstrap-theme {
+            --oslc-button-border-radius: 0.375rem;
+            --oslc-button-padding: 0.375rem 0.75rem;
+            --oslc-button-font-size: 1rem;
+            --oslc-button-border: 1px solid #007bff;
+            --oslc-button-background: #007bff;
+            --oslc-button-color: #ffffff;
+            --oslc-button-hover-background: #0056b3;
+            --oslc-button-hover-border-color: #0056b3;
+            --oslc-button-active-background: #004085;
+        }
+        
+        /* Rounded Theme */
+        .rounded-theme {
+            --oslc-button-border-radius: 25px;
+            --oslc-button-padding: 12px 24px;
+            --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --oslc-button-color: white;
+            --oslc-button-border: none;
+            --oslc-button-font-weight: 600;
+            --oslc-button-hover-transform: translateY(-2px);
+            --oslc-button-transition: all 0.3s ease;
+        }
+        
+        /* Dark Theme */
+        .dark-theme {
+            --oslc-button-background: #495057;
+            --oslc-button-color: #ffffff;
+            --oslc-button-border: 1px solid #6c757d;
+            --oslc-button-hover-background: #5a6268;
+            --oslc-button-hover-border-color: #545b62;
+            --oslc-button-active-background: #343a40;
+        }
+        
+        /* Outline Theme */
+        .outline-theme {
+            --oslc-button-background: transparent;
+            --oslc-button-color: #007bff;
+            --oslc-button-border: 2px solid #007bff;
+            --oslc-button-hover-background: #007bff;
+            --oslc-button-hover-color: white;
+            --oslc-button-active-background: #0056b3;
+        }
+        
+        /* Success Theme */
+        .success-theme {
+            --oslc-button-background: #28a745;
+            --oslc-button-color: white;
+            --oslc-button-border: 1px solid #28a745;
+            --oslc-button-hover-background: #218838;
+            --oslc-button-hover-border-color: #1e7e34;
+            --oslc-button-active-background: #1e7e34;
+        }
+        
+        /* Large Button Theme */
+        .large-theme {
+            --oslc-button-padding: 16px 32px;
+            --oslc-button-font-size: 1.2rem;
+            --oslc-button-font-weight: 600;
+            --oslc-button-min-width: 200px;
+            --oslc-button-border-radius: 8px;
+        }
+        
+        /* Compact Theme */
+        .compact-theme {
+            --oslc-button-padding: 4px 8px;
+            --oslc-button-font-size: 0.875rem;
+            --oslc-button-border-radius: 2px;
+        }
+        
+        /* Custom Animation Theme */
+        .animated-theme {
+            --oslc-button-background: #ff6b6b;
+            --oslc-button-color: white;
+            --oslc-button-border: none;
+            --oslc-button-border-radius: 6px;
+            --oslc-button-transition: all 0.3s ease;
+            --oslc-button-hover-background: #ff5252;
+            --oslc-button-hover-transform: scale(1.05);
+            --oslc-button-active-transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>OSLC Selection WebComponent - Styling Examples</h1>
+        <p>This page demonstrates how to style the OSLC Selection WebComponent using CSS custom properties. All examples use the same underlying component but with different styling applied through CSS variables.</p>
+    </header>
+
+    <section class="demo-section">
+        <h2>Theme Examples</h2>
+        <p>Here are various pre-built themes that showcase different styling approaches:</p>
+        
+        <div class="demo-grid">
+            <div class="demo-item">
+                <h4>Default Theme</h4>
+                <oslc-selection-button class="default-theme" button-text="Default Button"></oslc-selection-button>
+                <div class="code-block">/* Uses component defaults */
+.default-theme {
+    /* No custom properties needed */
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Material Design</h4>
+                <oslc-selection-button class="material-theme" button-text="Material Button"></oslc-selection-button>
+                <div class="code-block">.material-theme {
+    --oslc-button-border-radius: 4px;
+    --oslc-button-background: #1976d2;
+    --oslc-button-color: white;
+    --oslc-button-font-weight: 500;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Bootstrap Style</h4>
+                <oslc-selection-button class="bootstrap-theme" button-text="Bootstrap Button"></oslc-selection-button>
+                <div class="code-block">.bootstrap-theme {
+    --oslc-button-border-radius: 0.375rem;
+    --oslc-button-background: #007bff;
+    --oslc-button-color: #ffffff;
+    --oslc-button-border: 1px solid #007bff;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Rounded Gradient</h4>
+                <oslc-selection-button class="rounded-theme" button-text="Rounded Button"></oslc-selection-button>
+                <div class="code-block">.rounded-theme {
+    --oslc-button-border-radius: 25px;
+    --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --oslc-button-color: white;
+    --oslc-button-hover-transform: translateY(-2px);
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Dark Theme</h4>
+                <oslc-selection-button class="dark-theme" button-text="Dark Button"></oslc-selection-button>
+                <div class="code-block">.dark-theme {
+    --oslc-button-background: #495057;
+    --oslc-button-color: #ffffff;
+    --oslc-button-border: 1px solid #6c757d;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Outline Style</h4>
+                <oslc-selection-button class="outline-theme" button-text="Outline Button"></oslc-selection-button>
+                <div class="code-block">.outline-theme {
+    --oslc-button-background: transparent;
+    --oslc-button-color: #007bff;
+    --oslc-button-border: 2px solid #007bff;
+    --oslc-button-hover-background: #007bff;
+    --oslc-button-hover-color: white;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Success Theme</h4>
+                <oslc-selection-button class="success-theme" button-text="Success Button"></oslc-selection-button>
+                <div class="code-block">.success-theme {
+    --oslc-button-background: #28a745;
+    --oslc-button-color: white;
+    --oslc-button-hover-background: #218838;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Large Size</h4>
+                <oslc-selection-button class="large-theme" button-text="Large Button"></oslc-selection-button>
+                <div class="code-block">.large-theme {
+    --oslc-button-padding: 16px 32px;
+    --oslc-button-font-size: 1.2rem;
+    --oslc-button-font-weight: 600;
+    --oslc-button-min-width: 200px;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Compact Size</h4>
+                <oslc-selection-button class="compact-theme" button-text="Compact"></oslc-selection-button>
+                <div class="code-block">.compact-theme {
+    --oslc-button-padding: 4px 8px;
+    --oslc-button-font-size: 0.875rem;
+    --oslc-button-border-radius: 2px;
+}</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>Animated</h4>
+                <oslc-selection-button class="animated-theme" button-text="Animated Button"></oslc-selection-button>
+                <div class="code-block">.animated-theme {
+    --oslc-button-background: #ff6b6b;
+    --oslc-button-hover-transform: scale(1.05);
+    --oslc-button-active-transform: scale(0.95);
+    --oslc-button-transition: all 0.3s ease;
+}</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="demo-section">
+        <h2>CSS Custom Properties Reference</h2>
+        <p>The component exposes comprehensive CSS custom properties for styling. Here's a complete reference:</p>
+        
+        <div class="code-block">/* Button Container */
+--oslc-button-display: inline-block;
+--oslc-button-margin: 0;
+
+/* Button Appearance */
+--oslc-button-padding: 8px 16px;
+--oslc-button-border: 1px solid #ccc;
+--oslc-button-border-radius: 4px;
+--oslc-button-background: #f8f9fa;
+--oslc-button-color: #333;
+--oslc-button-font-family: inherit;
+--oslc-button-font-size: inherit;
+--oslc-button-font-weight: normal;
+--oslc-button-transition: all 0.2s ease;
+--oslc-button-min-width: auto;
+--oslc-button-min-height: auto;
+
+/* Button States */
+--oslc-button-hover-background: #e9ecef;
+--oslc-button-hover-border-color: #adb5bd;
+--oslc-button-hover-color: inherit;
+--oslc-button-hover-transform: none;
+--oslc-button-active-background: #dee2e6;
+--oslc-button-active-color: inherit;
+--oslc-button-active-transform: none;
+--oslc-button-disabled-background: #f8f9fa;
+--oslc-button-disabled-color: #6c757d;
+--oslc-button-disabled-opacity: 0.65;
+--oslc-button-focus-outline: 2px solid #007bff;
+--oslc-button-focus-outline-offset: 2px;
+
+/* Dialog Properties (40+ additional properties available) */
+/* See README.md for complete dialog styling options */</div>
+    </section>
+
+    <section class="demo-section">
+        <h2>Framework Integration</h2>
+        <p>The component can be easily styled within any CSS framework:</p>
+        
+        <div class="demo-grid">
+            <div class="demo-item">
+                <h4>Tailwind CSS Integration</h4>
+                <div class="code-block">/* In your CSS file */
+.oslc-btn-primary {
+    --oslc-button-background: theme('colors.blue.500');
+    --oslc-button-color: theme('colors.white');
+    --oslc-button-hover-background: theme('colors.blue.600');
+    --oslc-button-border-radius: theme('borderRadius.md');
+    --oslc-button-padding: theme('spacing.2') theme('spacing.4');
+}
+
+/* In your HTML */
+&lt;oslc-selection-button class="oslc-btn-primary"&gt;</div>
+            </div>
+            
+            <div class="demo-item">
+                <h4>CSS-in-JS (Styled Components)</h4>
+                <div class="code-block">const StyledOslcButton = styled('oslc-selection-button')`
+    --oslc-button-background: ${props => props.theme.primary};
+    --oslc-button-color: white;
+    --oslc-button-border-radius: 4px;
+    --oslc-button-hover-background: ${props => props.theme.primaryDark};
+    
+    &.large {
+        --oslc-button-padding: 16px 32px;
+        --oslc-button-font-size: 1.2rem;
+    }
+`;</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="demo-section">
+        <h2>Advantages of Raw Web Components vs Lit</h2>
+        
+        <div class="demo-grid">
+            <div class="demo-item">
+                <h4>✅ Raw Web Components (Current)</h4>
+                <ul>
+                    <li><strong>Zero dependencies</strong> - No framework overhead</li>
+                    <li><strong>Smaller bundle size</strong> - ~5KB vs ~25KB with Lit</li>
+                    <li><strong>Full CSS control</strong> - Complete customization via CSS variables</li>
+                    <li><strong>Framework agnostic</strong> - Works everywhere</li>
+                    <li><strong>Predictable styling</strong> - No framework-specific styling quirks</li>
+                    <li><strong>Better for JSP</strong> - No build step required</li>
+                </ul>
+            </div>
+            
+            <div class="demo-item">
+                <h4>⚠️ Lit Framework Alternative</h4>
+                <ul>
+                    <li><strong>Framework dependency</strong> - Adds ~20KB to bundle</li>
+                    <li><strong>More complex build</strong> - Requires additional tooling</li>
+                    <li><strong>CSS abstractions</strong> - Less direct control over styling</li>
+                    <li><strong>Learning curve</strong> - Framework-specific patterns</li>
+                    <li><strong>Overkill for simple component</strong> - Our use case is straightforward</li>
+                </ul>
+            </div>
+        </div>
+        
+        <p><strong>Conclusion:</strong> For OSLC Selection component, raw Web Components provide better developer experience, smaller footprint, and more flexible styling options. The comprehensive CSS custom properties system gives users complete control over appearance without framework dependencies.</p>
+    </section>
+</body>
+</html>
