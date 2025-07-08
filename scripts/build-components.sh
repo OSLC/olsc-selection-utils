@@ -1,8 +1,6 @@
 #!/bin/bash
-
-# OSLC Component Build Script
-# Builds both the postMessage helper and selection webcomponent
-# and copies them to the demo folder
+# OSLC Component Build Script for Bash
+# Builds both components using the workspace setup and copies them to the demo folder
 
 set -e  # Exit on any error
 
@@ -11,34 +9,38 @@ echo "🔨 Building OSLC Components..."
 # Navigate to project root
 cd "$(dirname "$0")/.."
 
-echo "📦 Installing dependencies for postMessage helper..."
-cd src/oslc-postmessage-helper
+echo "📦 Installing workspace dependencies..."
 npm install
 
 echo "🔨 Building postMessage helper..."
-npm run build
-
-echo "📋 Copying postMessage helper to demo..."
-mkdir -p ../oslc-selection-demo/vendor/@oslc
-cp -r dist ../oslc-selection-demo/vendor/@oslc/postmessage-helper
-
-echo "📦 Installing dependencies for selection webcomponent..."
-cd ../oslc-selection-webcomponent
-npm install
+npm run build --workspace=@oslc/postmessage-helper
 
 echo "🔨 Building selection webcomponent..."
-npm run build
+npm run build --workspace=@oslc/selection-webcomponent
 
-echo "📋 Copying selection webcomponent to demo..."
-mkdir -p ../oslc-selection-demo/vendor/@oslc
-cp -r dist ../oslc-selection-demo/vendor/@oslc/selection-webcomponent
+echo "📋 Copying components to demo..."
+
+# Create vendor directories
+VENDOR_BASE="src/oslc-selection-demo/vendor/@oslc"
+POSTMSG_TARGET="$VENDOR_BASE/oslc-postmessage-helper"
+SELECTION_TARGET="$VENDOR_BASE/oslc-selection-webcomponent"
+
+mkdir -p "$POSTMSG_TARGET"
+mkdir -p "$SELECTION_TARGET"
+
+# Copy built distributions
+cp -r src/oslc-postmessage-helper/dist/* "$POSTMSG_TARGET/"
+cp -r src/oslc-selection-webcomponent/dist/* "$SELECTION_TARGET/"
 
 echo "✅ Build complete! Components are ready in oslc-selection-demo/vendor/"
 echo ""
-echo "🌐 To run the demo:"
-echo "   cd src/oslc-selection-demo"
-echo "   python -m http.server 8080"
-echo "   # or"
-echo "   npx serve ."
+echo "🌐 Starting demo server..."
+
+# Navigate to demo directory and start server
+cd "src/oslc-selection-demo"
+echo "Starting server in $(pwd)..."
+echo "Demo will be available at http://localhost:3000"
+echo "Press Ctrl+C to stop the server"
 echo ""
-echo "Then open http://localhost:8080"
+
+npx serve . --listen 3000
