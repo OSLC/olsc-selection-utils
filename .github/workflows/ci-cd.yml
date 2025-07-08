@@ -27,15 +27,19 @@ jobs:
 
       - name: Install dependencies for postmessage-helper
         run: |
-          echo "Repository root: $(pwd)"
-          echo "Files in repository root:"
-          ls -la
-          echo "Changing to postmessage-helper directory..."
           cd src/oslc-postmessage-helper
           echo "Current working directory: $(pwd)"
-          echo "Files in current directory:"
-          ls -la
-          npm ci
+          echo "Checking npm and node versions:"
+          npm --version
+          node --version
+          echo "Checking package-lock.json content:"
+          head -10 package-lock.json
+          echo "Trying npm ci first..."
+          if ! npm ci; then
+            echo "npm ci failed, falling back to npm install..."
+            rm -f package-lock.json
+            npm install
+          fi
 
       - name: Run tests for postmessage-helper
         working-directory: ./src/oslc-postmessage-helper
