@@ -12,47 +12,8 @@
     <!-- Bootstrap for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- OSLC Components - load from local build -->
-    <script type="module">
-        // Load OSLC components
-        async function loadOslcComponents() {
-            try {
-                console.log('🔄 Loading OSLC Selection WebComponent...');
-                
-                // Load the browser-optimized bundle
-                await import('./vendor/@oslc/oslc-selection-webcomponent/index.browser.js');
-                console.log('✅ OSLC Selection WebComponent loaded successfully');
-                
-                // Set flag for build status
-                window.oslcProductionLoaded = true;
-                
-                // Update build status immediately
-                updateBuildStatus();
-                
-            } catch (error) {
-                console.error('❌ Failed to load OSLC component:', error);
-                window.oslcLoadError = error.message;
-                updateBuildStatus();
-            }
-        }
-        
-        // Make updateBuildStatus available globally
-        window.updateBuildStatus = function() {
-            const statusElement = document.getElementById('build-status');
-            if (statusElement) {
-                if (window.oslcProductionLoaded) {
-                    statusElement.innerHTML = '<span class="text-success">✅ Production components loaded successfully</span>';
-                } else if (window.oslcLoadError) {
-                    statusElement.innerHTML = `<span class="text-danger">❌ Failed to load components: ${window.oslcLoadError}</span>`;
-                } else {
-                    statusElement.innerHTML = '<span class="text-warning">⚠️ Components not loaded yet</span>';
-                }
-            }
-        }
-        
-        // Load components immediately
-        loadOslcComponents();
-    </script>
+    <!-- OSLC Components - load from workspace dependency -->
+    <script type="module" src="./demo.js"></script>
     
     <style>
         body {
@@ -149,7 +110,7 @@
         /* Theme Examples - CSS Custom Properties for Styling */
         
         /* Material Design Theme */
-        .material-theme {
+        .material-theme oslc-selection-button {
             --oslc-button-border-radius: 4px;
             --oslc-button-background: #1976d2;
             --oslc-button-color: white;
@@ -161,7 +122,7 @@
         }
         
         /* Bootstrap Theme */
-        .bootstrap-theme {
+        .bootstrap-theme oslc-selection-button {
             --oslc-button-border-radius: 0.375rem;
             --oslc-button-padding: 0.375rem 0.75rem;
             --oslc-button-font-size: 1rem;
@@ -174,7 +135,7 @@
         }
         
         /* Rounded Theme */
-        .rounded-theme {
+        .rounded-theme oslc-selection-button {
             --oslc-button-border-radius: 25px;
             --oslc-button-padding: 12px 24px;
             --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -186,7 +147,7 @@
         }
         
         /* Dark Theme */
-        .dark-theme {
+        .dark-theme oslc-selection-button {
             --oslc-button-background: #495057;
             --oslc-button-color: #ffffff;
             --oslc-button-border: 1px solid #6c757d;
@@ -196,7 +157,7 @@
         }
         
         /* Outline Theme */
-        .outline-theme {
+        .outline-theme oslc-selection-button {
             --oslc-button-background: transparent;
             --oslc-button-color: #007bff;
             --oslc-button-border: 2px solid #007bff;
@@ -206,7 +167,7 @@
         }
         
         /* Success Theme */
-        .success-theme {
+        .success-theme oslc-selection-button {
             --oslc-button-background: #28a745;
             --oslc-button-color: white;
             --oslc-button-border: 1px solid #28a745;
@@ -216,7 +177,7 @@
         }
         
         /* Large Button Theme */
-        .large-theme {
+        .large-theme oslc-selection-button {
             --oslc-button-padding: 16px 32px;
             --oslc-button-font-size: 1.2rem;
             --oslc-button-font-weight: 600;
@@ -225,14 +186,14 @@
         }
         
         /* Compact Theme */
-        .compact-theme {
+        .compact-theme oslc-selection-button {
             --oslc-button-padding: 4px 8px;
             --oslc-button-font-size: 0.875rem;
             --oslc-button-border-radius: 2px;
         }
         
         /* Custom Animation Theme */
-        .animated-theme {
+        .animated-theme oslc-selection-button {
             --oslc-button-background: #ff6b6b;
             --oslc-button-color: white;
             --oslc-button-border: none;
@@ -363,8 +324,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Material Design</h4>
-                    <oslc-selection-button class="material-theme" button-text="Material Button"></oslc-selection-button>
-                    <div class="code-block">.material-theme {
+                    <div class="material-theme">
+                        <oslc-selection-button button-text="Material Button" button-class="btn"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.material-theme oslc-selection-button {
     --oslc-button-background: #1976d2;
     --oslc-button-color: white;
     --oslc-button-font-weight: 500;
@@ -374,8 +337,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Bootstrap Style</h4>
-                    <oslc-selection-button class="bootstrap-theme" button-text="Bootstrap Button"></oslc-selection-button>
-                    <div class="code-block">.bootstrap-theme {
+                    <div class="bootstrap-theme">
+                        <oslc-selection-button button-text="Bootstrap Button" button-class="btn btn-primary"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.bootstrap-theme oslc-selection-button {
     --oslc-button-border: 1px solid #007bff;
     --oslc-button-background: #007bff;
     --oslc-button-color: #ffffff;
@@ -385,8 +350,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Rounded Theme</h4>
-                    <oslc-selection-button class="rounded-theme" button-text="Rounded Button"></oslc-selection-button>
-                    <div class="code-block">.rounded-theme {
+                    <div class="rounded-theme">
+                        <oslc-selection-button button-text="Rounded Button" button-class="btn"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.rounded-theme oslc-selection-button {
     --oslc-button-border-radius: 25px;
     --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --oslc-button-hover-transform: translateY(-2px);
@@ -395,8 +362,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Dark Theme</h4>
-                    <oslc-selection-button class="dark-theme" button-text="Dark Button"></oslc-selection-button>
-                    <div class="code-block">.dark-theme {
+                    <div class="dark-theme">
+                        <oslc-selection-button button-text="Dark Button" button-class="btn btn-dark"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.dark-theme oslc-selection-button {
     --oslc-button-background: #495057;
     --oslc-button-color: #ffffff;
     --oslc-button-border: 1px solid #6c757d;
@@ -405,8 +374,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Outline Theme</h4>
-                    <oslc-selection-button class="outline-theme" button-text="Outline Button"></oslc-selection-button>
-                    <div class="code-block">.outline-theme {
+                    <div class="outline-theme">
+                        <oslc-selection-button button-text="Outline Button" button-class="btn btn-outline-primary"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.outline-theme oslc-selection-button {
     --oslc-button-background: transparent;
     --oslc-button-color: #007bff;
     --oslc-button-border: 2px solid #007bff;
@@ -417,8 +388,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Success Theme</h4>
-                    <oslc-selection-button class="success-theme" button-text="Success Button"></oslc-selection-button>
-                    <div class="code-block">.success-theme {
+                    <div class="success-theme">
+                        <oslc-selection-button button-text="Success Button" button-class="btn btn-success"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.success-theme oslc-selection-button {
     --oslc-button-background: #28a745;
     --oslc-button-color: white;
     --oslc-button-hover-background: #218838;
@@ -427,8 +400,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Large Theme</h4>
-                    <oslc-selection-button class="large-theme" button-text="Large Button"></oslc-selection-button>
-                    <div class="code-block">.large-theme {
+                    <div class="large-theme">
+                        <oslc-selection-button button-text="Large Button" button-class="btn btn-primary btn-lg"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.large-theme oslc-selection-button {
     --oslc-button-padding: 16px 32px;
     --oslc-button-font-size: 1.2rem;
     --oslc-button-font-weight: 600;
@@ -438,8 +413,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Compact Theme</h4>
-                    <oslc-selection-button class="compact-theme" button-text="Compact"></oslc-selection-button>
-                    <div class="code-block">.compact-theme {
+                    <div class="compact-theme">
+                        <oslc-selection-button button-text="Compact" button-class="btn btn-primary btn-sm"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.compact-theme oslc-selection-button {
     --oslc-button-padding: 4px 8px;
     --oslc-button-font-size: 0.875rem;
     --oslc-button-border-radius: 2px;
@@ -448,8 +425,10 @@ document.querySelector('oslc-selection-button')
                 
                 <div class="demo-item">
                     <h4>Animated Theme</h4>
-                    <oslc-selection-button class="animated-theme" button-text="Animated Button"></oslc-selection-button>
-                    <div class="code-block">.animated-theme {
+                    <div class="animated-theme">
+                        <oslc-selection-button button-text="Animated Button" button-class="btn"></oslc-selection-button>
+                    </div>
+                    <div class="code-block">.animated-theme oslc-selection-button {
     --oslc-button-background: #ff6b6b;
     --oslc-button-hover-transform: scale(1.05);
     --oslc-button-active-transform: scale(0.95);

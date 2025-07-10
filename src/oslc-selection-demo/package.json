@@ -1,0 +1,23 @@
+{
+  "name": "oslc-selection-demo",
+  "version": "1.0.0",
+  "description": "HTML demo for OSLC Selection WebComponent",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview --port 8080",
+    "serve:python": "python -m http.server 8080",
+    "serve:npm": "npx serve .",
+    "clean": "rm -rf dist node_modules"
+  },
+  "dependencies": {
+    "@oslc/oslc-selection-webcomponent": "file:../oslc-selection-webcomponent"
+  },
+  "devDependencies": {
+    "vite": "^5.0.8",
+    "serve": "^14.0.0"
+  }
+} 
