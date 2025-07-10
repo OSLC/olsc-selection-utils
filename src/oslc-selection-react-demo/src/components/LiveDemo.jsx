@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-const LiveDemo = ({ oslcLoaded, selectedResources, onSelectionUpdate }) => {
+const LiveDemo = ({ oslcLoaded, selectedResources, onSelectionUpdate, onDialogUrlChange }) => {
   const [dialogUrl, setDialogUrl] = useState('https://rm.refimpl.oslc.ldsw.eu/services/serviceProviders/sp_single/service1/requirements/selector')
   const [protocol, setProtocol] = useState('#oslc-core-postMessage-1.0')
   const buttonRef = useRef(null)
@@ -12,7 +12,9 @@ const LiveDemo = ({ oslcLoaded, selectedResources, onSelectionUpdate }) => {
     if (buttonRef.current && oslcLoaded) {
       buttonRef.current.setAttribute('dialog-url', fullUrl)
     }
-  }, [fullUrl, oslcLoaded])
+    // Notify parent component of URL change
+    onDialogUrlChange?.(fullUrl)
+  }, [fullUrl, oslcLoaded, onDialogUrlChange])
 
   const parseUrlAndSetProtocol = (url) => {
     if (url.includes('#oslc-core-windowName-1.0')) {

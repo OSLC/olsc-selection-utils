@@ -15,6 +15,7 @@ function App() {
   const [oslcLoaded, setOslcLoaded] = useState(false)
   const [loadError, setLoadError] = useState(null)
   const [selectedResources, setSelectedResources] = useState([])
+  const [currentDialogUrl, setCurrentDialogUrl] = useState('')
 
   useEffect(() => {
     // Check if the OSLC component is available
@@ -61,6 +62,10 @@ function App() {
     setSelectedResources(prev => prev.filter((_, i) => i !== index))
   }
 
+  const handleDialogUrlChange = (url) => {
+    setCurrentDialogUrl(url)
+  }
+
   return (
     <div className="App">
       <HeroSection oslcLoaded={oslcLoaded} loadError={loadError} />
@@ -70,6 +75,7 @@ function App() {
           oslcLoaded={oslcLoaded} 
           selectedResources={selectedResources}
           onSelectionUpdate={setSelectedResources}
+          onDialogUrlChange={handleDialogUrlChange}
         />
         
         <ResultsSection 
@@ -78,7 +84,7 @@ function App() {
           onRemoveResource={removeResource}
         />
         
-        <StylingExamples oslcLoaded={oslcLoaded} />
+        <StylingExamples oslcLoaded={oslcLoaded} dialogUrl={currentDialogUrl} />
         
         <IntegrationExamples />
         

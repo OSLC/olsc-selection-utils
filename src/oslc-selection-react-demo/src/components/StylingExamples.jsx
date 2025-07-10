@@ -1,15 +1,17 @@
 import React from 'react'
 
-const StylingExamples = ({ oslcLoaded }) => {
+const StylingExamples = ({ oslcLoaded, dialogUrl }) => {
   const themes = [
     {
       name: 'Default Theme',
       className: '',
+      buttonClass: 'btn btn-primary',
       code: '/* No custom properties needed for default styling */'
     },
     {
       name: 'Material Design',
       className: 'material-theme',
+      buttonClass: 'btn',
       code: `.material-theme oslc-selection-button {
   --oslc-button-background: #1976d2;
   --oslc-button-color: white;
@@ -20,6 +22,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Bootstrap Style',
       className: 'bootstrap-theme',
+      buttonClass: 'btn btn-primary',
       code: `.bootstrap-theme oslc-selection-button {
   --oslc-button-border: 1px solid #007bff;
   --oslc-button-background: #007bff;
@@ -30,6 +33,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Rounded Theme',
       className: 'rounded-theme',
+      buttonClass: 'btn',
       code: `.rounded-theme oslc-selection-button {
   --oslc-button-border-radius: 25px;
   --oslc-button-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -39,6 +43,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Dark Theme',
       className: 'dark-theme',
+      buttonClass: 'btn btn-dark',
       code: `.dark-theme oslc-selection-button {
   --oslc-button-background: #495057;
   --oslc-button-color: #ffffff;
@@ -48,6 +53,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Outline Theme',
       className: 'outline-theme',
+      buttonClass: 'btn btn-outline-primary',
       code: `.outline-theme oslc-selection-button {
   --oslc-button-background: transparent;
   --oslc-button-color: #007bff;
@@ -59,6 +65,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Success Theme',
       className: 'success-theme',
+      buttonClass: 'btn btn-success',
       code: `.success-theme oslc-selection-button {
   --oslc-button-background: #28a745;
   --oslc-button-color: white;
@@ -68,6 +75,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Large Theme',
       className: 'large-theme',
+      buttonClass: 'btn btn-primary btn-lg',
       code: `.large-theme oslc-selection-button {
   --oslc-button-padding: 16px 32px;
   --oslc-button-font-size: 1.2rem;
@@ -78,6 +86,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Compact Theme',
       className: 'compact-theme',
+      buttonClass: 'btn btn-primary btn-sm',
       code: `.compact-theme oslc-selection-button {
   --oslc-button-padding: 4px 8px;
   --oslc-button-font-size: 0.875rem;
@@ -87,6 +96,7 @@ const StylingExamples = ({ oslcLoaded }) => {
     {
       name: 'Animated Theme',
       className: 'animated-theme',
+      buttonClass: 'btn',
       code: `.animated-theme oslc-selection-button {
   --oslc-button-background: #ff6b6b;
   --oslc-button-hover-transform: scale(1.05);
@@ -108,7 +118,10 @@ const StylingExamples = ({ oslcLoaded }) => {
             <div className={theme.className}>
               {oslcLoaded ? (
                 <oslc-selection-button 
-                  button-text={`${theme.name} Button`}>
+                  button-text={`${theme.name} Button`}
+                  button-class={theme.buttonClass}
+                  dialog-url={dialogUrl}
+                  dialog-title={`${theme.name} Selection`}>
                 </oslc-selection-button>
               ) : (
                 <button className="btn btn-secondary" disabled>
