@@ -4,19 +4,34 @@
   "description": "OSLC Selection utilities including postMessage helper and web component",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "src/oslc-postmessage-helper",
+    "src/oslc-selection-webcomponent",
+    "src/oslc-selection-demo",
+    "src/oslc-selection-react-demo"
+  ],
   "scripts": {
     "build": "pwsh ./scripts/build-components.ps1",
     "build:linux": "./scripts/build-components.sh",
     "test:ci": "pwsh ./scripts/test-ci-local.ps1",
     "test:ci:verbose": "pwsh ./scripts/test-ci-local.ps1 -Verbose",
-    "clean": "npm run clean:postmessage && npm run clean:webcomponent",
+    "clean": "npm run clean:postmessage && npm run clean:webcomponent && npm run clean:demo && npm run clean:react-demo",
     "clean:postmessage": "cd src/oslc-postmessage-helper && npm run clean",
     "clean:webcomponent": "cd src/oslc-selection-webcomponent && npm run clean",
-    "install:all": "npm run install:postmessage && npm run install:webcomponent",
+    "clean:demo": "cd src/oslc-selection-demo && npm run clean",
+    "clean:react-demo": "cd src/oslc-selection-react-demo && npm run clean",
+    "install:all": "npm run install:postmessage && npm run install:webcomponent && npm run install:demo && npm run install:react-demo",
     "install:postmessage": "cd src/oslc-postmessage-helper && npm install",
     "install:webcomponent": "cd src/oslc-selection-webcomponent && npm install",
-    "serve:demo": "cd src/oslc-selection-demo && python -m http.server 8080",
-    "serve:demo:npm": "cd src/oslc-selection-demo && npx serve .",
+    "install:demo": "cd src/oslc-selection-demo && npm install",
+    "install:react-demo": "cd src/oslc-selection-react-demo && npm install",
+    "demo:dev": "cd src/oslc-selection-demo && npm run dev",
+    "demo:build": "cd src/oslc-selection-demo && npm run build",
+    "demo:preview": "cd src/oslc-selection-demo && npm run preview",
+    "demo:serve": "cd src/oslc-selection-demo && npm run serve",
+    "react:demo:dev": "cd src/oslc-selection-react-demo && npm run dev",
+    "react:demo:build": "cd src/oslc-selection-react-demo && npm run build",
+    "react:demo:preview": "cd src/oslc-selection-react-demo && npm run preview",
     "lint": "echo 'Linting not configured'",
     "test": "echo 'Root level tests not configured'"
   },
@@ -29,7 +44,9 @@
     "selection",
     "webcomponent",
     "postmessage",
-    "delegated-ui"
+    "delegated-ui",
+    "react",
+    "demo"
   ],
   "author": "OSLC Community",
   "license": "EPL-1.0 OR EDL-1.0",
@@ -37,10 +54,6 @@
     "url": "https://github.com/OSLC/olsc-selection-utils/issues"
   },
   "homepage": "https://github.com/OSLC/olsc-selection-utils#readme",
-  "workspaces": [
-    "src/oslc-postmessage-helper",
-    "src/oslc-selection-webcomponent"
-  ],
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
