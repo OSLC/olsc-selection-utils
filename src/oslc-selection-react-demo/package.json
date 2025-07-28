@@ -1,5 +1,5 @@
 {
-  "name": "oslc-selection-react-demo",
+  "name": "@oslc/selection-demo-react",
   "version": "1.0.0",
   "description": "React demo for OSLC Selection WebComponent",
   "private": true,

@@ -43,17 +43,7 @@ try {
     
     Write-Host "✅ Build complete! Components are ready in oslc-selection-demo/vendor/" -ForegroundColor Green
     Write-Host ""
-    Write-Host "🌐 Starting demo server..." -ForegroundColor Cyan
-    
-    # Navigate to demo directory and start server
-    Push-Location "src/oslc-selection-demo"
-    Write-Host "Starting server in $(Get-Location)..." -ForegroundColor Yellow
-    Write-Host "Demo will be available at http://localhost:3000" -ForegroundColor Green
-    Write-Host "Press Ctrl+C to stop the server" -ForegroundColor Gray
-    Write-Host ""
-    
-    npx serve . --listen 3000
-    
+    Write-Host "🌐 Starting demo server..." -ForegroundColor Cyan    
 } catch {
     Write-Host "❌ Build failed: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host ""

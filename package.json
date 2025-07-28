@@ -60,5 +60,9 @@
   },
   "devDependencies": {
     "serve": "^14.0.0"
+  },
+  "dependencies": {
+    "@oslc/postmessage-helper": "^1.0.0",
+    "@oslc/selection-webcomponent": "^1.0.0"
   }
 }

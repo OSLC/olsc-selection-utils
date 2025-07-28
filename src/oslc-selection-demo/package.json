@@ -1,5 +1,5 @@
 {
-  "name": "oslc-selection-demo",
+  "name": "@oslc/selection-demo",
   "version": "1.0.0",
   "description": "HTML demo for OSLC Selection WebComponent",
   "private": true,

@@ -34,13 +34,3 @@ cp -r src/oslc-selection-webcomponent/dist/* "$SELECTION_TARGET/"
 
 echo "✅ Build complete! Components are ready in oslc-selection-demo/vendor/"
 echo ""
-echo "🌐 Starting demo server..."
-
-# Navigate to demo directory and start server
-cd "src/oslc-selection-demo"
-echo "Starting server in $(pwd)..."
-echo "Demo will be available at http://localhost:3000"
-echo "Press Ctrl+C to stop the server"
-echo ""
-
-npx serve . --listen 3000

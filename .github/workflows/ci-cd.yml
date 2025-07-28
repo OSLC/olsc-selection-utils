@@ -137,29 +137,7 @@ jobs:
           # Build both components using workspace commands
           npm run build --workspace=@oslc/postmessage-helper
           npm run build --workspace=@oslc/selection-webcomponent          
-          npm run build --workspace=@oslc/oslc-selection-demo
-
-      - name: Create deployment version info
-        run: |
-          cd src/oslc-selection-demo
-          cat > version.json << EOF
-          {
-            "version": "$(date -u +%Y%m%d-%H%M%S)",
-            "commit": "${{ github.sha }}",
-            "branch": "${{ github.ref_name }}",
-            "buildTime": "$(date -u --iso-8601=seconds)",
-            "components": {
-              "postmessage-helper": "$(cd ../oslc-postmessage-helper && npm pkg get version | tr -d '\"')",
-              "selection-webcomponent": "$(cd ../oslc-selection-webcomponent && npm pkg get version | tr -d '\"')"
-            }
-          }
-          EOF
-
-      - name: Create index page with build info
-        run: |
-          cd src/oslc-selection-demo
-          # Add build info to the HTML
-          sed -i 's|<div class="alert alert-info mt-4" role="alert">.*</div>|<div class="alert alert-success mt-4" role="alert"><strong>Build Status:</strong> <span class="text-success">✅ GitHub Pages deployment - Built from commit ${{ github.sha }}</span><br><small>Build time: $(date -u --iso-8601=seconds)</small></div>|' index.html
+          npm run build --workspace=@oslc/selection-demo
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
