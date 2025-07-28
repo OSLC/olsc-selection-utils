@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OSLC/olsc-selection-utils.git"
+    "url": "git+https://github.com/OSLC/oslc-selection-utils.git"
   },
   "keywords": [
     "oslc",
@@ -51,9 +51,9 @@
   "author": "OSLC Community",
   "license": "EPL-1.0 OR EDL-1.0",
   "bugs": {
-    "url": "https://github.com/OSLC/olsc-selection-utils/issues"
+    "url": "https://github.com/OSLC/oslc-selection-utils/issues"
   },
-  "homepage": "https://github.com/OSLC/olsc-selection-utils#readme",
+  "homepage": "https://github.com/OSLC/oslc-selection-utils#readme",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"

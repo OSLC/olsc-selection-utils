@@ -1,8 +1,8 @@
 # OSLC Selection Utils
 
-[![CI/CD Pipeline](https://github.com/OSLC/olsc-selection-utils/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/OSLC/olsc-selection-utils/actions/workflows/ci-cd.yml)
+[![CI/CD Pipeline](https://github.com/OSLC/oslc-selection-utils/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/OSLC/oslc-selection-utils/actions/workflows/ci-cd.yml)
 [![GitHub Pages](https://img.shields.io/badge/demo-github%20pages-blue)](https://OSLC.github.io/olsc-selection-utils/)
-[![npm package](https://img.shields.io/badge/npm-@oslc/selection--webcomponent-red)](https://github.com/OSLC/olsc-selection-utils/packages)
+[![npm package](https://img.shields.io/badge/npm-@oslc/selection--webcomponent-red)](https://github.com/OSLC/oslc-selection-utils/packages)
 
 A comprehensive toolkit for implementing OSLC Selection dialogs in web applications, featuring modern Web Components with extensive styling capabilities.
 
