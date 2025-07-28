@@ -136,14 +136,8 @@ jobs:
         run: |
           # Build both components using workspace commands
           npm run build --workspace=@oslc/postmessage-helper
-          npm run build --workspace=@oslc/selection-webcomponent
-          
-          # Copy built components to demo vendor folder
-          mkdir -p src/oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper
-          mkdir -p src/oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent
-          
-          cp -r src/oslc-postmessage-helper/dist/* src/oslc-selection-demo/vendor/@oslc/oslc-postmessage-helper/
-          cp -r src/oslc-selection-webcomponent/dist/* src/oslc-selection-demo/vendor/@oslc/oslc-selection-webcomponent/
+          npm run build --workspace=@oslc/selection-webcomponent          
+          npm run build --workspace=@oslc/oslc-selection-demo
 
       - name: Create deployment version info
         run: |
